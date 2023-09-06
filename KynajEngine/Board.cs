@@ -165,6 +165,8 @@ namespace KynajEngine
             {
                 this.state[move.toIndex] = move.promotion;
             }
+
+            this.isWhiteMove = !this.isWhiteMove;
         }
 
         public void undoMove(Move move)
@@ -180,7 +182,9 @@ namespace KynajEngine
                 if(move.toIndex > 8)
                     this.state[move.fromIndex] = Piece.BlackPawn;
                 else
-                    this.state[move.fromIndex] = Piece.WhitePawn; 
+                    this.state[move.fromIndex] = Piece.WhitePawn;
+
+            this.isWhiteMove = !this.isWhiteMove;
         }
 
         public string toString()

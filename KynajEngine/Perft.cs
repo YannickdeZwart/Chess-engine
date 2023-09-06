@@ -9,6 +9,25 @@ namespace KynajEngine
 {
     public static class Perft
     {
+        public static int handle(Board board, int depth)
+        {
+            if(depth == 0) 
+                return 1;
+
+            int nodes = 0;
+
+            foreach(Move move in getPossibleMovesList(board, board.isWhiteMove))
+            {
+                board.makeMove(move);
+
+                nodes += handle(board, depth - 1);
+
+                board.undoMove(move);
+            }
+
+            return nodes;
+        }
+
         public static List<Move> getPossibleMovesList(Board board, bool isWhite)
         {
             Piece[] boardState = board.getState();
@@ -29,17 +48,16 @@ namespace KynajEngine
 
                         if (isChecked(isWhite, board))
                         {
+                            // Move resulted in a self check so is illegal
+
                             board.undoMove(move);
-
-                            Console.WriteLine("Illegal Move: " + Notation.getAlgebraicNotation(move));
-
                             continue;
                         }
 
+                        
                         board.undoMove(move);
 
-                            Console.WriteLine("legal Move: " + Notation.getAlgebraicNotation(move));
-
+                        // Move is legal and is added
                         moves.Add(move);
                     }
                 }
