@@ -8,7 +8,7 @@ namespace KynajEngine
 {
     static class UciHandler
     {
-        private static Board board = new();
+        private static Board board = new(true);
 
         public static void handle(string[] tokens)
         {
@@ -31,7 +31,7 @@ namespace KynajEngine
                     board = updatePosition(tokens);
                     break;
                 case "go":
-                    List<Move> moves = Perft.getPossibleMovesList(board, true);
+                    List<Move> moves = Perft.getPossibleMovesList(board, board.isWhiteMove);
                     Random random = new();
 
                     Move randomMove = moves[random.Next(moves.Count() - 1)];
@@ -39,6 +39,13 @@ namespace KynajEngine
                     string move = randomMove.getUciNotation();
 
                     response = $"bestmove {move} - from: {randomMove.fromIndex} - to: {randomMove.toIndex} ";
+                    break;
+
+                case "fen":
+                    board = new(tokens[1] + " " + tokens[2] + " " + tokens[3] + " " + tokens[4] + " " + tokens[5]);
+
+                    response = board.toString();
+
                     break;
                 default:
                     response = $"{command} is not a command";
@@ -51,7 +58,7 @@ namespace KynajEngine
         private static Board updatePosition(string[] tokens)
         {
             List<String> moves = new();
-            Board board = new();
+            Board board = new(true);
 
             if (tokens[1] == "startpos")
             {
@@ -63,7 +70,7 @@ namespace KynajEngine
                 return updateBoard(board, moves);
             }
 
-            return new Board();
+            return new(true);
         }
 
         private static Board updateBoard(Board board, List<String> moves)

@@ -8,8 +8,8 @@ namespace KynajEngine
 {
     static class Notation
     {
-        private static char[] letters = new char[8] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
-        private static char[] numbers = new char[8] { '8', '7', '6', '5', '4', '3', '2', '1' };
+        public static char[] letters = new char[8] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+        public static char[] numbers = new char[8] { '8', '7', '6', '5', '4', '3', '2', '1' };
         public static string pieceNotation(Piece piece)
         {
             switch (piece)
@@ -49,7 +49,7 @@ namespace KynajEngine
                     throw new Exception();
             }
         }
-
+      
         public static Piece getPromotionPiece(char piece, bool isWhite)
         {
             switch(piece)
@@ -64,6 +64,40 @@ namespace KynajEngine
                     return isWhite ? Piece.WhiteRook : Piece.BlackRook;
                 case 'q':
                     return isWhite ? Piece.WhiteQueen : Piece.BlackQueen;
+                default:
+                    throw new Exception();
+            }
+        }
+      
+        public static Piece notationToPiece(char piece)
+        {
+            switch (piece)
+            {
+                case 'p':
+                    return Piece.BlackPawn;
+                case 'n':
+                    return Piece.BlackKnight;
+                case 'b':
+                    return Piece.BlackBishop;
+                case 'r':
+                    return Piece.BlackRook;
+                case 'q':
+                    return Piece.BlackQueen;
+                case 'k':
+                    return Piece.BlackKing;
+
+                case 'P':
+                    return Piece.WhitePawn;
+                case 'N':
+                    return Piece.WhiteKnight;
+                case 'B':
+                    return Piece.WhiteBishop;
+                case 'R':
+                    return Piece.WhiteRook;
+                case 'Q':
+                    return Piece.WhiteQueen;
+                case 'K':
+                    return Piece.WhiteKing;
                 default:
                     throw new Exception();
             }
