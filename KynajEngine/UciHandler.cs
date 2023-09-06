@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,17 +90,18 @@ namespace KynajEngine
 
         private static Board updateBoard(Board board, List<String> moves)
         {
+            board.isWhiteMove = moves.Count() % 2 == 0;
+
             for(int i = 0; i < moves.Count(); i++)
             {
                 string move = moves[i];
-
-                bool isWhite = i % 2 == 0;
-
                 char letterFrom = move[0];
                 char numberFrom = move[1];
                 char letterTo = move[2];
                 char numberTo = move[3];
                 Piece promotion = Piece.None;
+
+                bool isWhite = i % 2 == 0;
 
                 if (move.Length > 4)
                 {
