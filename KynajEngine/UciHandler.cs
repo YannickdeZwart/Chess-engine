@@ -54,6 +54,12 @@ namespace KynajEngine
                     board = updatePosition(tokens);
 
                     break;
+
+
+                case "perft":
+                    response = getPerft(tokens).ToString();
+
+                    break;
                 default:
                     response = $"{command} is not a command";
                     break;
@@ -118,6 +124,13 @@ namespace KynajEngine
             }
 
             return board;
+        }
+
+        private static int getPerft(string[] tokens)
+        {
+            int depth = Int32.Parse(tokens[1]);
+
+            return Perft.handle(board, depth);
         }
     }
 }
