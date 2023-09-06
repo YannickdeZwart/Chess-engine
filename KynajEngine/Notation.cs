@@ -50,6 +50,25 @@ namespace KynajEngine
             }
         }
 
+        public static Piece getPromotionPiece(char piece, bool isWhite)
+        {
+            switch(piece)
+            {
+                case 'n':
+                    return isWhite ? Piece.WhiteKnight : Piece.BlackKnight;
+
+                case 'b':
+                    return isWhite ? Piece.WhiteBishop : Piece.BlackBishop;
+
+                case 'r':
+                    return isWhite ? Piece.WhiteRook : Piece.BlackRook;
+                case 'q':
+                    return isWhite ? Piece.WhiteQueen : Piece.BlackQueen;
+                default:
+                    throw new Exception();
+            }
+        }
+
         public static char getPromotionLetter(Piece piece)
         {
             switch(piece)
