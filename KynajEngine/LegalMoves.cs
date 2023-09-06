@@ -81,48 +81,49 @@ namespace KynajEngine
         {
             List<Byte> moves = new List<byte>();
 
-            byte nextSquareIndex = (byte) ( isWhite ? index - 8 : index + 8 );
-            byte doubleNextSquareIndex = (byte)(isWhite ? index - 16 : index + 16);
+            int nextSquareIndex = isWhite ? index - 8 : index + 8;
+            int doubleNextSquareIndex = isWhite ? index - 16 : index + 16;
 
-            bool nextSquareEmpty = board.squareEmpty(nextSquareIndex);
-            bool doubleNextSquareEmpty = board.squareEmpty(doubleNextSquareIndex);
-
-            if (nextSquareEmpty)
+            if (!OutOfBound(nextSquareIndex))
             {
-                // Pawn 1 square forward
-                moves.Add(nextSquareIndex);
+                bool nextSquareEmpty = board.squareEmpty((byte) nextSquareIndex);
 
-                if (doubleNextSquareEmpty && pawnFirstMove(index, isWhite))
+                if (nextSquareEmpty)
                 {
-                    // Pawn 2 squares forward
-                    moves.Add(doubleNextSquareIndex);
+                    // Pawn 1 square forward
+                    moves.Add((byte) nextSquareIndex);
+
+                    if(!OutOfBound(doubleNextSquareIndex))
+                    {
+                        bool doubleNextSquareEmpty = board.squareEmpty((byte) doubleNextSquareIndex);
+
+                        if (doubleNextSquareEmpty && pawnFirstMove(index, isWhite))
+                        {
+                            // Pawn 2 squares forward
+                            moves.Add((byte) doubleNextSquareIndex);
+                        }
+                    }
                 }
             }
 
             // calculate the index depending on the color
-            byte leftDiagnalIndex = (byte) ( isWhite ? index - 9 : index + 7 );
-            byte rightDiagnalIndex = (byte) ( isWhite ? index - 7 : index + 9 );
+            int leftDiagnalIndex =  isWhite ? index - 9 : index + 7;
+            int rightDiagnalIndex = isWhite ? index - 7 : index + 9;
 
 
             // checks if the piece is on row 1 and therefor can not move left
-            if (!RowOne.Contains(leftDiagnalIndex))
-            {
-                // checks if there is an enemy piece on the left diagnal
-                if (board.squareIsEnemy(leftDiagnalIndex, isWhite))
-                {
-                    moves.Add(leftDiagnalIndex);
-                }
-            }
+            if(!OutOfBound(leftDiagnalIndex))
+                if (!RowOne.Contains(index))
+                    // checks if there is an enemy piece on the left diagnal
+                    if (board.squareIsEnemy((byte) leftDiagnalIndex, isWhite))
+                        moves.Add((byte) leftDiagnalIndex);
 
             // checks if the piece is on row 8 and therefor can not move right
-            if (!RowEight.Contains(rightDiagnalIndex))
-            {
-                // checks if there is an enemy piece on the right diagnal
-                if (board.squareIsEnemy(rightDiagnalIndex, isWhite))
-                {
-                    moves.Add(rightDiagnalIndex);
-                }
-            }
+            if (!OutOfBound(leftDiagnalIndex))
+                if (!RowEight.Contains(index))
+                    // checks if there is an enemy piece on the right diagnal
+                    if (board.squareIsEnemy((byte) rightDiagnalIndex, isWhite))
+                        moves.Add((byte) rightDiagnalIndex);
 
             return moves;
         }
@@ -228,34 +229,32 @@ namespace KynajEngine
 
                     byte newIndex = (byte) newIndexFull;
 
+                    
+                    bool rowOneExcception = RowOne.Contains(newIndex);
+                    bool rowEightExcception = RowEight.Contains(newIndex);
+
                     if (board.squareEmpty(newIndex))
                     {
                         moves.Add(newIndex);
 
                         // Checks if direction reached a corner and stops the search
-                        if (RowOne.Contains(newIndex))
-                            if(moveIndex == -9 || moveIndex == 7)
+                        if (rowOneExcception)
+                            if (moveIndex == -9 || moveIndex == 7)
                                 break;
 
-                        if (RowEight.Contains(newIndex))
+                        if(rowEightExcception)
                             if (moveIndex == 9 || moveIndex == -7)
                                 break;
 
                         continue;
-                    }
-
-
-
+                    } else
                     // breaks current direction search stop because blocked by enemy piece
                     if (board.squareIsEnemy(newIndex, isWhite))
                     {
                         moves.Add(newIndex);
                         break;
-                    }
-
-
-                    // breaks current direction search stop because blocked by friendly piece
-                    if (!board.squareIsEnemy(newIndex, isWhite))
+                    } else
+                    // breaks because the other option is a friendly piece blocking this square
                         break;
                 }
             }
