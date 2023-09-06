@@ -64,7 +64,7 @@ namespace KynajEngine
 
                         foreach (Move move in legalMoves)
                             moves.Add(move);
-                    }
+                        }
             }
 
             return moves;

@@ -55,10 +55,10 @@ namespace KynajEngine
             state[5] = Piece.BlackBishop;
 
             //setup black king
-            state[3] = Piece.BlackKing;
+            state[3] = Piece.BlackQueen;
 
             //setup black queen
-            state[4] = Piece.BlackQueen;
+            state[4] = Piece.BlackKing;
 
 
 
@@ -149,11 +149,22 @@ namespace KynajEngine
 
         public void makeMove(Move move)
         {
+            // Add capture for undo
+            move.capture = this.state[move.toIndex];
+
             // First whe set the piece of the new square to the piece of the old square
             this.state[move.toIndex] = this.state[move.fromIndex];
 
             // Now whe reset the old square
             this.state[move.fromIndex] = Piece.None;
+
+
+
+            // Check for promotion and add
+            if(move.promotion != Piece.None)
+            {
+                this.state[move.toIndex] = move.promotion;
+            }
         }
 
         public void undoMove(Move move)
@@ -162,7 +173,14 @@ namespace KynajEngine
             this.state[move.fromIndex] = this.state[move.toIndex];
 
             // Now whe reset the new square
-            this.state[move.toIndex] = Piece.None;
+            this.state[move.toIndex] = move.capture;
+
+            // Check for promotion and remove
+            if (move.promotion != Piece.None)
+                if(move.toIndex > 8)
+                    this.state[move.fromIndex] = Piece.BlackPawn;
+                else
+                    this.state[move.fromIndex] = Piece.WhitePawn; 
         }
 
         public string toString()
@@ -187,6 +205,8 @@ namespace KynajEngine
         public byte fromIndex;
         public byte toIndex;
         public Piece promotion;
+
+        public Piece capture = Piece.None;
 
         public Move(byte fromIndex, byte toIndex, Piece promotion)
         {

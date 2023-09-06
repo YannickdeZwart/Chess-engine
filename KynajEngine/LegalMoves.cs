@@ -62,7 +62,7 @@ namespace KynajEngine
                 case Piece.WhiteQueen:
                     return getMovesQueen(board, index, true);
                 case Piece.BlackQueen:
-                    return getMovesQueen(board, index, true);
+                    return getMovesQueen(board, index, false);
 
                 case Piece.WhiteKing:
                     return getMovesKing(board, index, true);
@@ -235,8 +235,21 @@ namespace KynajEngine
 
             foreach(int moveIndex in moveIndexes)
             {
-                for(int i = 1; i < 10; i++)
+                for(int i = 0; i < 10; i++)
                 {
+                    // check if the first square is illegal
+                    if (i == 0)
+                    {
+                        if (RowOne.Contains(index))
+                            if (moveIndex == -9 || moveIndex == 7)
+                                break;
+
+                        if (RowEight.Contains(index))
+                            if (moveIndex == 9 || moveIndex == -7)
+                                break;
+                        continue;
+                    }
+
                     int newIndexFull = index + (moveIndex * i);
 
                     // Checks if position is out of bounds for the board
@@ -263,15 +276,17 @@ namespace KynajEngine
                                 break;
 
                         continue;
-                    } else
+                    }
                     // breaks current direction search stop because blocked by enemy piece
-                    if (board.squareIsEnemy(newIndex, isWhite))
+                    else if (board.squareIsEnemy(newIndex, isWhite))
                     {
-                        moves.Add(new Move(index, (byte) newIndex, Piece.None));
+                        moves.Add(new Move(index, (byte)newIndex, Piece.None));
                         break;
-                    } else
-                    // breaks because the other option is a friendly piece blocking this square
+                    }
+                    else if (!board.squareIsEnemy(newIndex, isWhite))
+                    {
                         break;
+                    }          
                 }
             }
 
@@ -285,8 +300,22 @@ namespace KynajEngine
 
             foreach (int moveIndex in moveIndexes)
             {
-                for (int i = 1; i < 10; i++)
+                for (int i = 0; i < 10; i++)
                 {
+                    if(i == 0)
+                    {
+                        if (RowOne.Contains(index))
+                            if (moveIndex == -1)
+                                break;
+
+                        if (RowEight.Contains(index))
+                            if (moveIndex == 1)
+                                break;
+
+                        continue;
+                    }
+
+
                     int newIndexFull = index + (moveIndex * i);
 
                     // Checks if position is out of bounds for the board
@@ -300,30 +329,27 @@ namespace KynajEngine
                         moves.Add(new Move(index, (byte) newIndex, Piece.None));
 
                         // Checks if direction reached a corner and stops the search
-                        if (RowOne.Contains(index))
+                        if (RowOne.Contains(newIndex))
                             if (moveIndex == -1 || moveIndex == 7 || moveIndex == -9)
                                 break;
 
-                        if (RowEight.Contains(index))
+                        if (RowEight.Contains(newIndex))
                             if (moveIndex == 1 || moveIndex == -7 || moveIndex == 9)
                                 break;
 
                         continue;
                     }
-
-
-
                     // breaks current direction search stop because blocked by enemy piece
-                    if (board.squareIsEnemy(newIndex, isWhite))
+                    else if (board.squareIsEnemy(newIndex, isWhite))
                     {
-                        moves.Add(new Move(index, (byte) newIndex, Piece.None));
+                        moves.Add(new Move(index, (byte)newIndex, Piece.None));
                         break;
                     }
-
-
                     // breaks current direction search stop because blocked by friendly piece
-                    if (!board.squareIsEnemy(newIndex, isWhite))
+                    else if (!board.squareIsEnemy(newIndex, isWhite))
+                    {
                         break;
+                    }        
                 }
             }
 

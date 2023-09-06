@@ -34,6 +34,8 @@ namespace KynajEngine
                     List<Move> moves = Perft.getPossibleMovesList(board, board.isWhiteMove);
                     Random random = new();
 
+                    Console.WriteLine(board.toString());
+
                     Move randomMove = moves[random.Next(moves.Count() - 1)];
 
                     string move = randomMove.getUciNotation();
@@ -47,6 +49,10 @@ namespace KynajEngine
                     response = board.toString();
 
                     break;
+                case "play":
+                    board = updatePosition(tokens);
+
+                    break;
                 default:
                     response = $"{command} is not a command";
                     break;
@@ -58,14 +64,22 @@ namespace KynajEngine
         private static Board updatePosition(string[] tokens)
         {
             List<String> moves = new();
-            Board board = new(true);
 
             if (tokens[1] == "startpos")
             {
+                Board board = new(true);
+
                 for (int i = 3; i < tokens.Count(); i++)
                 {
                     moves.Add(tokens[i]);
                 }
+
+                return updateBoard(board, moves);
+            }
+
+            if (tokens[1] == "move")
+            {
+                moves.Add(tokens[2]);
 
                 return updateBoard(board, moves);
             }
@@ -99,8 +113,6 @@ namespace KynajEngine
                 Move moveToPlay = new(indexFrom, indexTo, promotion);
 
                 board.makeMove(moveToPlay);
-
-                Console.WriteLine(board.toString());
             }
 
             return board;
