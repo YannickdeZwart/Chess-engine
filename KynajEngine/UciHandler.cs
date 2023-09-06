@@ -75,18 +75,28 @@ namespace KynajEngine
 
         private static Board updateBoard(Board board, List<String> moves)
         {
-            foreach(string move in moves)
+            for(int i = 0; i < moves.Count(); i++)
             {
+                string move = moves[i];
+
+                bool isWhite = i % 2 == 0;
+
                 char letterFrom = move[0];
                 char numberFrom = move[1];
                 char letterTo = move[2];
                 char numberTo = move[3];
+                Piece promotion = Piece.None;
+
+                if (move.Length > 4)
+                {
+                    promotion = Notation.getPromotionPiece(move[4], isWhite);
+                }
                 //promotion
 
                 byte indexFrom = (byte) Notation.AlgebraicToIndex(letterFrom, numberFrom);
                 byte indexTo = (byte)Notation.AlgebraicToIndex(letterTo, numberTo);
 
-                Move moveToPlay = new(indexFrom, indexTo, Piece.None);
+                Move moveToPlay = new(indexFrom, indexTo, promotion);
 
                 board.makeMove(moveToPlay);
 

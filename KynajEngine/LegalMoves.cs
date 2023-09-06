@@ -33,7 +33,7 @@ namespace KynajEngine
         private static int[] KingMoves = new int[8] { -9, -8, -7, -1, 1, 7, 8, 9 };
 
 
-        public static List<Byte> getMoves(Board board, byte index)
+        public static List<Move> getMoves(Board board, byte index)
         {
             Piece piece = board.getindexPiece(index);
 
@@ -77,9 +77,9 @@ namespace KynajEngine
         // Pawn generator moves
         // TODO: add en-passent + promotion
         //
-        private static List<Byte> getMovesPawn(Board board, byte index, Boolean isWhite)
+        private static List<Move> getMovesPawn(Board board, byte index, Boolean isWhite)
         {
-            List<Byte> moves = new List<byte>();
+            List<Move> moves = new List<Move>();
 
             int nextSquareIndex = isWhite ? index - 8 : index + 8;
             int doubleNextSquareIndex = isWhite ? index - 16 : index + 16;
@@ -90,8 +90,24 @@ namespace KynajEngine
 
                 if (nextSquareEmpty)
                 {
-                    // Pawn 1 square forward
-                    moves.Add((byte) nextSquareIndex);
+                    if (AFile.Contains((byte)nextSquareIndex) || HFile.Contains((byte)nextSquareIndex))
+                    {
+                        Move movePromoteKnight = new(index, (byte) nextSquareIndex, isWhite ? Piece.WhiteKnight : Piece.BlackKnight);
+                        Move movePromoteBishop = new(index, (byte) nextSquareIndex, isWhite ? Piece.WhiteBishop : Piece.BlackBishop);
+                        Move movePromoteRook = new(index, (byte) nextSquareIndex, isWhite ? Piece.WhiteRook : Piece.BlackRook);
+                        Move movePromoteQueen = new(index, (byte) nextSquareIndex, isWhite ? Piece.WhiteQueen : Piece.BlackQueen);
+
+                        moves.Add(movePromoteKnight);
+                        moves.Add(movePromoteBishop);
+                        moves.Add(movePromoteRook);
+                        moves.Add(movePromoteQueen);
+                    } else
+                    {
+                        // Pawn 1 square forward
+                        moves.Add(new Move(index, (byte) nextSquareIndex, Piece.None));
+                    }
+
+
 
                     if(!OutOfBound(doubleNextSquareIndex))
                     {
@@ -100,7 +116,7 @@ namespace KynajEngine
                         if (doubleNextSquareEmpty && pawnFirstMove(index, isWhite))
                         {
                             // Pawn 2 squares forward
-                            moves.Add((byte) doubleNextSquareIndex);
+                            moves.Add(new Move(index, (byte)doubleNextSquareIndex, Piece.None));
                         }
                     }
                 }
@@ -116,14 +132,14 @@ namespace KynajEngine
                 if (!RowOne.Contains(index))
                     // checks if there is an enemy piece on the left diagnal
                     if (board.squareIsEnemy((byte) leftDiagnalIndex, isWhite))
-                        moves.Add((byte) leftDiagnalIndex);
+                        moves.Add(new Move(index, (byte)leftDiagnalIndex, Piece.None));
 
             // checks if the piece is on row 8 and therefor can not move right
-            if (!OutOfBound(leftDiagnalIndex))
+            if (!OutOfBound(rightDiagnalIndex))
                 if (!RowEight.Contains(index))
                     // checks if there is an enemy piece on the right diagnal
                     if (board.squareIsEnemy((byte) rightDiagnalIndex, isWhite))
-                        moves.Add((byte) rightDiagnalIndex);
+                        moves.Add(new Move(index, (byte)rightDiagnalIndex, Piece.None));
 
             return moves;
         }
@@ -143,9 +159,9 @@ namespace KynajEngine
         // Knight generator moves
         //
 
-        private static List<Byte> getMovesKnight(Board board, byte index, Boolean isWhite)
+        private static List<Move> getMovesKnight(Board board, byte index, Boolean isWhite)
         {
-            List<Byte> moves = new List<byte>();
+            List<Move> moves = new List<Move>();
             int[] moveindexes = KnightMoves;
 
             Boolean firstRowException = RowOne.Contains(index);
@@ -207,14 +223,14 @@ namespace KynajEngine
                     if (!board.squareIsEnemy((byte) finalindex, isWhite))  
                         continue;
 
-                moves.Add((byte) finalindex);
+                moves.Add(new Move(index, (byte) finalindex, Piece.None));
             }
 
             return moves;
         }
-        private static List<Byte> getMovesBishop(Board board, byte index, Boolean isWhite)
+        private static List<Move> getMovesBishop(Board board, byte index, Boolean isWhite)
         {
-            List<Byte> moves = new List<byte>();
+            List<Move> moves = new List<Move>();
             int[] moveIndexes = BishopMoves;
 
             foreach(int moveIndex in moveIndexes)
@@ -235,7 +251,7 @@ namespace KynajEngine
 
                     if (board.squareEmpty(newIndex))
                     {
-                        moves.Add(newIndex);
+                        moves.Add(new Move(index, (byte) newIndex, Piece.None));
 
                         // Checks if direction reached a corner and stops the search
                         if (rowOneExcception)
@@ -251,7 +267,7 @@ namespace KynajEngine
                     // breaks current direction search stop because blocked by enemy piece
                     if (board.squareIsEnemy(newIndex, isWhite))
                     {
-                        moves.Add(newIndex);
+                        moves.Add(new Move(index, (byte) newIndex, Piece.None));
                         break;
                     } else
                     // breaks because the other option is a friendly piece blocking this square
@@ -262,9 +278,9 @@ namespace KynajEngine
             return moves;
         }
 
-        private static List<Byte> getMovesRook(Board board, byte index, Boolean isWhite)
+        private static List<Move> getMovesRook(Board board, byte index, Boolean isWhite)
         {
-            List<Byte> moves = new List<byte>();
+            List<Move> moves = new List<Move>();
             int[] moveIndexes = RookMoves;
 
             foreach (int moveIndex in moveIndexes)
@@ -281,7 +297,7 @@ namespace KynajEngine
 
                     if (board.squareEmpty(newIndex))
                     {
-                        moves.Add(newIndex);
+                        moves.Add(new Move(index, (byte) newIndex, Piece.None));
 
                         // Checks if direction reached a corner and stops the search
                         if (RowOne.Contains(index))
@@ -300,7 +316,7 @@ namespace KynajEngine
                     // breaks current direction search stop because blocked by enemy piece
                     if (board.squareIsEnemy(newIndex, isWhite))
                     {
-                        moves.Add(newIndex);
+                        moves.Add(new Move(index, (byte) newIndex, Piece.None));
                         break;
                     }
 
@@ -314,16 +330,16 @@ namespace KynajEngine
             return moves;
         }
 
-        private static List<Byte> getMovesQueen(Board board, byte index, Boolean isWhite)
+        private static List<Move> getMovesQueen(Board board, byte index, Boolean isWhite)
         {
-            List<Byte> moves = new List<byte>();
+            List<Move> moves = new List<Move>();
 
-            foreach (byte move in getMovesBishop(board, index, isWhite))
+            foreach (Move move in getMovesBishop(board, index, isWhite))
             {
                 moves.Add(move);
             }
 
-            foreach (byte move in getMovesRook(board, index, isWhite))
+            foreach (Move move in getMovesRook(board, index, isWhite))
             {
                 moves.Add(move);
             }
@@ -331,9 +347,9 @@ namespace KynajEngine
             return moves;
         }
 
-        private static List<Byte> getMovesKing(Board board, byte index, Boolean isWhite)
+        private static List<Move> getMovesKing(Board board, byte index, Boolean isWhite)
         {
-            List<Byte> moves = new List<byte>();
+            List<Move> moves = new List<Move>();
             int[] moveIndexes = KingMoves;
 
             foreach (int moveIndex in moveIndexes)
@@ -356,7 +372,7 @@ namespace KynajEngine
 
                 if (board.squareEmpty(newIndex))
                 {
-                    moves.Add(newIndex);
+                    moves.Add(new Move(index, (byte)newIndex, Piece.None));
                     continue;
                 }
 
@@ -365,7 +381,7 @@ namespace KynajEngine
                     continue;
                 }
 
-                moves.Add(newIndex);
+                moves.Add(new Move(index, (byte)newIndex, Piece.None));
             }
 
             return moves;

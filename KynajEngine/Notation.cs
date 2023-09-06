@@ -49,7 +49,26 @@ namespace KynajEngine
                     throw new Exception();
             }
         }
+      
+        public static Piece getPromotionPiece(char piece, bool isWhite)
+        {
+            switch(piece)
+            {
+                case 'n':
+                    return isWhite ? Piece.WhiteKnight : Piece.BlackKnight;
 
+                case 'b':
+                    return isWhite ? Piece.WhiteBishop : Piece.BlackBishop;
+
+                case 'r':
+                    return isWhite ? Piece.WhiteRook : Piece.BlackRook;
+                case 'q':
+                    return isWhite ? Piece.WhiteQueen : Piece.BlackQueen;
+                default:
+                    throw new Exception();
+            }
+        }
+      
         public static Piece notationToPiece(char piece)
         {
             switch (piece)
@@ -79,7 +98,6 @@ namespace KynajEngine
                     return Piece.WhiteQueen;
                 case 'K':
                     return Piece.WhiteKing;
-
                 default:
                     throw new Exception();
             }

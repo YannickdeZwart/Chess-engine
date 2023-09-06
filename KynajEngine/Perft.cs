@@ -21,21 +21,24 @@ namespace KynajEngine
                     if (isWhite == board.squareIsWhite(index))
                     {
                     // The legal moves for the current piece
-                    List<Byte> legalMoves = LegalMoves.getMoves(board, index);
+                    List<Move> legalMoves = LegalMoves.getMoves(board, index);
 
-                    foreach(byte toIndex in legalMoves)
+                    foreach(Move move in legalMoves)
                     {
-                        Move move = new Move(index, toIndex, Piece.None);
-
                         board.makeMove(move);
 
                         if (isChecked(isWhite, board))
                         {
                             board.undoMove(move);
+
+                            Console.WriteLine("Illegal Move: " + Notation.getAlgebraicNotation(move));
+
                             continue;
                         }
 
                         board.undoMove(move);
+
+                            Console.WriteLine("legal Move: " + Notation.getAlgebraicNotation(move));
 
                         moves.Add(move);
                     }
@@ -57,14 +60,10 @@ namespace KynajEngine
                     if (isWhite == board.squareIsWhite(index))
                     {
                         // The legal moves for the current piece
-                        List<Byte> legalMoves = LegalMoves.getMoves(board, index);
+                        List<Move> legalMoves = LegalMoves.getMoves(board, index);
 
-                        foreach (byte toIndex in legalMoves)
-                        {
-                            Move move = new Move(index, toIndex, Piece.None);
-
+                        foreach (Move move in legalMoves)
                             moves.Add(move);
-                        }
                     }
             }
 
@@ -73,22 +72,7 @@ namespace KynajEngine
 
         public static int getPossibleMovesCount(Board board)
         {
-            Piece[] boardState = board.getState();
-            int moveCount = 0;
-
-            // Loops trough all the pieces on the board
-            for (byte index = 0; index < boardState.Length; index++)
-            {
-                if (boardState[index] != Piece.None)
-                {
-                    // The legal moves for the current piece
-                    List<Byte> legalMoves = LegalMoves.getMoves(board, index);
-
-                    legalMoves.ForEach(action => { moveCount++; });
-                }
-            }
-
-            return moveCount;
+            return getPossibleMovesList(board, true).Count();
         }
 
         public static int PerftF(Board board, int depth, bool isWhite = true)
@@ -153,7 +137,7 @@ namespace KynajEngine
                     kingIndex = i;
             }
 
-            List<Move> legalMovesOppisite = Perft.getPossibleMovesListWithoutCheck(board, !isWhite);
+            List<Move> legalMovesOppisite = getPossibleMovesListWithoutCheck(board, !isWhite);
 
             foreach (Move move in legalMovesOppisite)
                 if (move.toIndex == kingIndex)
