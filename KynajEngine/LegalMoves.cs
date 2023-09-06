@@ -284,12 +284,12 @@ namespace KynajEngine
                         moves.Add(newIndex);
 
                         // Checks if direction reached a corner and stops the search
-                        if (RowOne.Contains(newIndex))
-                            if (moveIndex == -1)
+                        if (RowOne.Contains(index))
+                            if (moveIndex == -1 || moveIndex == 7 || moveIndex == -9)
                                 break;
 
-                        if (RowEight.Contains(newIndex))
-                            if (moveIndex == 1)
+                        if (RowEight.Contains(index))
+                            if (moveIndex == 1 || moveIndex == -7 || moveIndex == 9)
                                 break;
 
                         continue;
