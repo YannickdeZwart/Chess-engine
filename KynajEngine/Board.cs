@@ -22,6 +22,8 @@ namespace KynajEngine
     {
         private Piece[] state = new Piece[64];
 
+        public Boolean isWhiteMove;
+
         // for clonability
         public object Clone()
         {
@@ -30,8 +32,10 @@ namespace KynajEngine
 
 
         // Setup's a normal chess board
-        public Board()
+        public Board(Boolean isWhiteMove)
         {
+            this.isWhiteMove = isWhiteMove;
+
             //setup black pawns
             for (int i = 8; i <= 15; i++)
             {
@@ -81,6 +85,41 @@ namespace KynajEngine
 
             //setup white king
             state[60] = Piece.WhiteKing;
+        }
+
+        public Board(string fen)
+        {
+            string[] split = fen.Split(' ');
+
+            string boardState = split[0].Replace("/", "");
+
+            string startPlayer = split[1];
+
+            this.isWhiteMove = startPlayer == "w";
+
+            int skipcounter = 0;
+            for(int i = 0; i < boardState.Count(); i++)
+            {
+                char symbol = boardState[i];
+
+                switch(symbol)
+                {
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                        int number = (int)Char.GetNumericValue(symbol);
+                        skipcounter += number - 1;
+                        break;
+                    default:
+                        state[i + skipcounter] = Notation.notationToPiece(symbol); 
+                        break;
+                }
+            }
         }
 
         public bool squareEmpty(byte index)
