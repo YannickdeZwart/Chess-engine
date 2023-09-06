@@ -9,7 +9,7 @@ namespace KynajEngine
 {
     public static class Perft
     {
-        public static int handle(Board board, int depth)
+        public static int handle(Board board, int depth, int level = 0)
         {
             if(depth == 0) 
                 return 1;
@@ -20,7 +20,13 @@ namespace KynajEngine
             {
                 board.makeMove(move);
 
-                nodes += handle(board, depth - 1);
+                int nodeCount = handle(board, depth - 1, level + 1);
+
+                if(level == 0)
+                    Console.WriteLine(Notation.getAlgebraicNotation(move) + " - " + nodeCount);
+
+
+                nodes += nodeCount;
 
                 board.undoMove(move);
             }

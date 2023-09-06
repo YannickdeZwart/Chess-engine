@@ -130,7 +130,7 @@ namespace KynajEngine
             // checks if the piece is on row 1 and therefor can not move left
             if(!OutOfBound(leftDiagnalIndex))
                 if (!RowOne.Contains(index))
-                    if (!board.squareEmpty((byte)rightDiagnalIndex))
+                    if (!board.squareEmpty((byte)leftDiagnalIndex))
                         // checks if there is an enemy piece on the left diagnal
                         if (board.squareIsEnemy((byte) leftDiagnalIndex, isWhite))
                         moves.Add(new Move(index, (byte)leftDiagnalIndex, Piece.None));
