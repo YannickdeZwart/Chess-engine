@@ -11,8 +11,11 @@ namespace KynajEngine
     {
         public static int handle(Board board, int depth, int level = 0)
         {
-            if(depth == 0) 
-                return 1;
+
+            // When the search is on the last search only the moves there will be made and then returned
+            // now i return the count off the moves for efficiency
+            if(depth == 1) 
+                return getPossibleMovesList(board, board.isWhiteMove).Count();
 
             int nodes = 0;
 
