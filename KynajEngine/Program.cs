@@ -4,6 +4,8 @@ public class Program
 {
     static void Main(string[] args)
     {
+        UciHandler uciHandler = new UciHandler();
+
         while (true)
         {
             // this is what the engine recieves from gui
@@ -11,7 +13,7 @@ public class Program
 
             string[] tokens = input.Split();
 
-            UciHandler.handle(tokens);
+            uciHandler.handle(tokens);
          }
     }
 }
